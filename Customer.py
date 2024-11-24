@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configuración de estilo de matplotlib
+plt.style.use('seaborn-whitegrid')
+sns.set_palette("muted")
 
 # Datos simulados para las capacidades
 data_sensing = {
@@ -47,14 +52,23 @@ st.markdown(
     """
 )
 
-# Función para graficar KPIs con meta
-def plot_kpi(df, x_col, y_col, meta_col, title, xlabel, ylabel):
+# Función para graficar KPIs con alternancia de tipos de gráficos
+def plot_kpi(df, x_col, y_col, meta_col, title, xlabel, ylabel, chart_type="line"):
     fig, ax = plt.subplots(figsize=(8, 4))
-    ax.plot(df[x_col], df[y_col], marker='o', label='Actual')
-    ax.plot(df[x_col], df[meta_col], linestyle='--', label='Meta', color='red')
-    ax.set_title(title)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
+    if chart_type == "line":
+        ax.plot(df[x_col], df[y_col], marker='o', label='Actual', linewidth=2)
+        ax.plot(df[x_col], df[meta_col], linestyle='--', label='Meta', color='red', linewidth=2)
+    elif chart_type == "bar":
+        ax.bar(df[x_col], df[y_col], label='Actual', color='skyblue', alpha=0.8)
+        ax.plot(df[x_col], df[meta_col], linestyle='--', label='Meta', color='red', linewidth=2)
+    elif chart_type == "stacked_bar":
+        width = 0.4
+        ax.bar(df[x_col], df[y_col], width, label='Actual', color='blue')
+        ax.bar(df[x_col], df[meta_col], width, label='Meta', bottom=df[y_col], color='orange', alpha=0.6)
+    
+    ax.set_title(title, fontsize=14, fontweight='bold')
+    ax.set_xlabel(xlabel, fontsize=12)
+    ax.set_ylabel(ylabel, fontsize=12)
     ax.legend()
     st.pyplot(fig)
 
@@ -69,11 +83,11 @@ st.markdown(
 )
 
 plot_kpi(df_sensing, "Periodo", "Datos Analizados (%)", "Meta Datos Analizados (%)",
-         "Porcentaje de Datos Analizados", "Periodo", "Porcentaje")
+         "Porcentaje de Datos Analizados", "Periodo", "Porcentaje", chart_type="line")
 plot_kpi(df_sensing, "Periodo", "Insights Generados", "Meta Insights Generados",
-         "Insights Generados", "Periodo", "Cantidad")
+         "Insights Generados", "Periodo", "Cantidad", chart_type="bar")
 plot_kpi(df_sensing, "Periodo", "Tasa Respuesta (%)", "Meta Tasa Respuesta (%)",
-         "Tasa de Respuesta", "Periodo", "Porcentaje")
+         "Tasa de Respuesta", "Periodo", "Porcentaje", chart_type="line")
 
 # Sección para Seizing
 st.markdown("## Captación (Seizing)")
@@ -86,11 +100,11 @@ st.markdown(
 )
 
 plot_kpi(df_seizing, "Periodo", "Usuarios Activos", "Meta Usuarios Activos",
-         "Usuarios Activos", "Periodo", "Cantidad")
+         "Usuarios Activos", "Periodo", "Cantidad", chart_type="bar")
 plot_kpi(df_seizing, "Periodo", "Tasa de Conversión (%)", "Meta Tasa de Conversión (%)",
-         "Tasa de Conversión", "Periodo", "Porcentaje")
+         "Tasa de Conversión", "Periodo", "Porcentaje", chart_type="line")
 plot_kpi(df_seizing, "Periodo", "Funcionalidades Implementadas", "Meta Funcionalidades Implementadas",
-         "Funcionalidades Implementadas", "Periodo", "Cantidad")
+         "Funcionalidades Implementadas", "Periodo", "Cantidad", chart_type="stacked_bar")
 
 # Sección para Configuring
 st.markdown("## Configuración (Configuring)")
@@ -103,10 +117,10 @@ st.markdown(
 )
 
 plot_kpi(df_configuring, "Periodo", "Capacidad Usuarios Concurrentes", "Meta Capacidad Usuarios Concurrentes",
-         "Capacidad de Usuarios Concurrentes", "Periodo", "Cantidad")
+         "Capacidad de Usuarios Concurrentes", "Periodo", "Cantidad", chart_type="bar")
 plot_kpi(df_configuring, "Periodo", "Tiempo Inactividad (%)", "Meta Tiempo Inactividad (%)",
-         "Tiempo de Inactividad", "Periodo", "Porcentaje")
+         "Tiempo de Inactividad", "Periodo", "Porcentaje", chart_type="line")
 plot_kpi(df_configuring, "Periodo", "Precisión IA (%)", "Meta Precisión IA (%)",
-         "Precisión de IA", "Periodo", "Porcentaje")
+         "Precisión de IA", "Periodo", "Porcentaje", chart_type="line")
 
 st.markdown("**Nota:** Los datos son simulados para ilustrar el tablero y no representan información real.")
