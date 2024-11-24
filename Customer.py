@@ -1,48 +1,112 @@
-import matplotlib.pyplot as plt
+import streamlit as st
 import pandas as pd
-import numpy as np
+import matplotlib.pyplot as plt
 
-# Datos de ejemplo (ajusta con tus datos específicos)
-x = np.arange(1, 6)
-y1 = np.random.randint(10, 50, size=5)
-y2 = np.random.randint(5, 40, size=5)
+# Datos simulados para las capacidades
+data_sensing = {
+    "Periodo": ["Q1", "Q2", "Q3", "Q4"],
+    "Datos Analizados (%)": [50, 65, 75, 80],
+    "Meta Datos Analizados (%)": [60, 70, 80, 90],
+    "Insights Generados": [10, 15, 20, 25],
+    "Meta Insights Generados": [12, 18, 24, 30],
+    "Tasa Respuesta (%)": [70, 75, 80, 85],
+    "Meta Tasa Respuesta (%)": [75, 80, 85, 90],
+}
 
-# Crear un dashboard con varios gráficos
-fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+data_seizing = {
+    "Periodo": ["Q1", "Q2", "Q3", "Q4"],
+    "Usuarios Activos": [200, 300, 400, 500],
+    "Meta Usuarios Activos": [250, 350, 450, 550],
+    "Tasa de Conversión (%)": [20, 30, 35, 40],
+    "Meta Tasa de Conversión (%)": [25, 35, 40, 50],
+    "Funcionalidades Implementadas": [1, 2, 2, 3],
+    "Meta Funcionalidades Implementadas": [1, 2, 3, 4],
+}
 
-# Configurar fondo blanco para todo el dashboard
-fig.patch.set_facecolor('white')
+data_configuring = {
+    "Periodo": ["Q1", "Q2", "Q3", "Q4"],
+    "Capacidad Usuarios Concurrentes": [100, 150, 200, 250],
+    "Meta Capacidad Usuarios Concurrentes": [120, 160, 220, 280],
+    "Tiempo Inactividad (%)": [5, 4, 3, 2],
+    "Meta Tiempo Inactividad (%)": [4, 3, 3, 2],
+    "Precisión IA (%)": [70, 75, 80, 85],
+    "Meta Precisión IA (%)": [75, 80, 85, 90],
+}
 
-# Gráfico 1: Línea
-axs[0, 0].plot(x, y1, marker='o', label='Serie 1', color='blue')
-axs[0, 0].set_title("¿Cuál es la tendencia de la Serie 1?")
-axs[0, 0].set_xlabel("X")
-axs[0, 0].set_ylabel("Y")
-axs[0, 0].legend()
-axs[0, 0].grid(True)
+# Transformar a DataFrames
+df_sensing = pd.DataFrame(data_sensing)
+df_seizing = pd.DataFrame(data_seizing)
+df_configuring = pd.DataFrame(data_configuring)
 
-# Gráfico 2: Barras
-axs[0, 1].bar(x, y1, color='green', label='Barras 1')
-axs[0, 1].set_title("¿Cómo se comparan los valores de la Serie 1?")
-axs[0, 1].set_xlabel("X")
-axs[0, 1].set_ylabel("Y")
-axs[0, 1].legend()
+# Configurar el título del tablero
+st.title("Tablero de Control: Innovación Centrada en el Cliente")
+st.markdown(
+    """
+    Este tablero muestra los KPIs organizados por metas y capacidades. Cada gráfico incluye los datos actuales
+    y las metas respectivas para monitorear el progreso hacia los OKRs definidos.
+    """
+)
 
-# Gráfico 3: Línea alternativa
-axs[1, 0].plot(x, y2, marker='s', linestyle='--', label='Serie 2', color='red')
-axs[1, 0].set_title("¿Cuál es la tendencia de la Serie 2?")
-axs[1, 0].set_xlabel("X")
-axs[1, 0].set_ylabel("Y")
-axs[1, 0].legend()
-axs[1, 0].grid(True)
+# Función para graficar KPIs con meta
+def plot_kpi(df, x_col, y_col, meta_col, title, xlabel, ylabel):
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.plot(df[x_col], df[y_col], marker='o', label='Actual')
+    ax.plot(df[x_col], df[meta_col], linestyle='--', label='Meta', color='red')
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.legend()
+    st.pyplot(fig)
 
-# Gráfico 4: Barras alternativas
-axs[1, 1].bar(x, y2, color='orange', label='Barras 2')
-axs[1, 1].set_title("¿Cómo se comparan los valores de la Serie 2?")
-axs[1, 1].set_xlabel("X")
-axs[1, 1].set_ylabel("Y")
-axs[1, 1].legend()
+# Sección para Sensing
+st.markdown("## Detección (Sensing)")
+st.markdown(
+    """
+    ### OKR: Analizar datos y generar insights
+    Este OKR busca mejorar el análisis de datos para identificar oportunidades de innovación y atender mejor
+    las necesidades de los clientes.
+    """
+)
 
-# Ajustar diseño general y márgenes
-plt.tight_layout()
-plt.show()
+plot_kpi(df_sensing, "Periodo", "Datos Analizados (%)", "Meta Datos Analizados (%)",
+         "Porcentaje de Datos Analizados", "Periodo", "Porcentaje")
+plot_kpi(df_sensing, "Periodo", "Insights Generados", "Meta Insights Generados",
+         "Insights Generados", "Periodo", "Cantidad")
+plot_kpi(df_sensing, "Periodo", "Tasa Respuesta (%)", "Meta Tasa Respuesta (%)",
+         "Tasa de Respuesta", "Periodo", "Porcentaje")
+
+# Sección para Seizing
+st.markdown("## Captación (Seizing)")
+st.markdown(
+    """
+    ### OKR: Incrementar adopción y funcionalidades
+    Este OKR está enfocado en aumentar la adopción de la plataforma myRAzept y desarrollar nuevas
+    funcionalidades basadas en las necesidades del cliente.
+    """
+)
+
+plot_kpi(df_seizing, "Periodo", "Usuarios Activos", "Meta Usuarios Activos",
+         "Usuarios Activos", "Periodo", "Cantidad")
+plot_kpi(df_seizing, "Periodo", "Tasa de Conversión (%)", "Meta Tasa de Conversión (%)",
+         "Tasa de Conversión", "Periodo", "Porcentaje")
+plot_kpi(df_seizing, "Periodo", "Funcionalidades Implementadas", "Meta Funcionalidades Implementadas",
+         "Funcionalidades Implementadas", "Periodo", "Cantidad")
+
+# Sección para Configuring
+st.markdown("## Configuración (Configuring)")
+st.markdown(
+    """
+    ### OKR: Optimizar infraestructura digital
+    Este OKR busca mejorar la capacidad tecnológica y la personalización de servicios a través de IA
+    para optimizar la experiencia del cliente.
+    """
+)
+
+plot_kpi(df_configuring, "Periodo", "Capacidad Usuarios Concurrentes", "Meta Capacidad Usuarios Concurrentes",
+         "Capacidad de Usuarios Concurrentes", "Periodo", "Cantidad")
+plot_kpi(df_configuring, "Periodo", "Tiempo Inactividad (%)", "Meta Tiempo Inactividad (%)",
+         "Tiempo de Inactividad", "Periodo", "Porcentaje")
+plot_kpi(df_configuring, "Periodo", "Precisión IA (%)", "Meta Precisión IA (%)",
+         "Precisión de IA", "Periodo", "Porcentaje")
+
+st.markdown("**Nota:** Los datos son simulados para ilustrar el tablero y no representan información real.")
